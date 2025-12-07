@@ -6,11 +6,11 @@ import {
   NavigateTool,
   PressKeyTool,
   WaitTool,
-} from "@repo/types/mcp/tool";
+} from "../types/tool.js";
 
-import { captureAriaSnapshot } from "@/utils/aria-snapshot";
+import { captureAriaSnapshot } from "../utils/aria-snapshot.js";
 
-import type { Tool, ToolFactory } from "./tool";
+import type { Tool, ToolFactory } from "./tool.js";
 
 export const navigate: ToolFactory = (snapshot) => ({
   schema: {

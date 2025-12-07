@@ -6,10 +6,10 @@ import {
   ReadResourceRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
 
-import { Context } from "@/context";
-import type { Resource } from "@/resources/resource";
-import type { Tool } from "@/tools/tool";
-import { createWebSocketServer } from "@/ws";
+import { Context } from "./context.js";
+import type { Resource } from "./resources/resource.js";
+import type { Tool } from "./tools/tool.js";
+import { createWebSocketServer } from "./ws.js";
 
 type Options = {
   name: string;
@@ -82,8 +82,10 @@ export async function createServerWithTools(options: Options): Promise<Server> {
     return { contents };
   });
 
+  // Store reference to the original close method before overriding
+  const originalClose = server.close.bind(server);
   server.close = async () => {
-    await server.close();
+    await originalClose();
     await wss.close();
     await context.close();
   };

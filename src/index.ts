@@ -3,16 +3,16 @@ import type { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { program } from "commander";
 
-import { appConfig } from "@repo/config/app.config";
+import { appConfig } from "./config/app.config.js";
 
-import type { Resource } from "@/resources/resource";
-import { createServerWithTools } from "@/server";
-import * as common from "@/tools/common";
-import * as custom from "@/tools/custom";
-import * as snapshot from "@/tools/snapshot";
-import type { Tool } from "@/tools/tool";
+import type { Resource } from "./resources/resource.js";
+import { createServerWithTools } from "./server.js";
+import * as common from "./tools/common.js";
+import * as custom from "./tools/custom.js";
+import * as snapshot from "./tools/snapshot.js";
+import type { Tool } from "./tools/tool.js";
 
-import packageJSON from "../package.json";
+import packageJSON from "../package.json" assert { type: "json" };
 
 function setupExitWatchdog(server: Server) {
   process.stdin.on("close", async () => {
@@ -24,7 +24,7 @@ function setupExitWatchdog(server: Server) {
 
 const commonTools: Tool[] = [common.pressKey, common.wait];
 
-const customTools: Tool[] = [custom.getConsoleLogs, custom.screenshot];
+const customTools: Tool[] = [custom.getConsoleLogs, custom.getNetworkLogs, custom.screenshot];
 
 const snapshotTools: Tool[] = [
   common.navigate(true),

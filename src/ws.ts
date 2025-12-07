@@ -1,9 +1,8 @@
 import { WebSocketServer } from "ws";
 
-import { mcpConfig } from "@repo/config/mcp.config";
-import { wait } from "@repo/utils";
-
-import { isPortInUse, killProcessOnPort } from "@/utils/port";
+import { mcpConfig } from "./config/mcp.config.js";
+import { wait } from "./utils/wait.js";
+import { isPortInUse, killProcessOnPort } from "./utils/port.js";
 
 export async function createWebSocketServer(
   port: number = mcpConfig.defaultWsPort,

@@ -7,12 +7,12 @@ import {
   SelectOptionTool,
   SnapshotTool,
   TypeTool,
-} from "@repo/types/mcp/tool";
+} from "../types/tool.js";
 
-import type { Context } from "@/context";
-import { captureAriaSnapshot } from "@/utils/aria-snapshot";
+import type { Context } from "../context.js";
+import { captureAriaSnapshot } from "../utils/aria-snapshot.js";
 
-import type { Tool } from "./tool";
+import type { Tool } from "./tool.js";
 
 export const snapshot: Tool = {
   schema: {

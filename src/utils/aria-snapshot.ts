@@ -1,5 +1,5 @@
-import { Context } from "@/context";
-import { ToolResult } from "@/tools/tool";
+import { Context } from "../context.js";
+import { ToolResult } from "../tools/tool.js";
 
 export async function captureAriaSnapshot(
   context: Context,

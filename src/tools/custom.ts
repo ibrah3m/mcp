@@ -1,8 +1,8 @@
 import { zodToJsonSchema } from "zod-to-json-schema";
 
-import { GetConsoleLogsTool, ScreenshotTool } from "@repo/types/mcp/tool";
+import { GetConsoleLogsTool, GetNetworkLogsTool, ScreenshotTool } from "../types/tool.js";
 
-import { Tool } from "./tool";
+import { Tool } from "./tool.js";
 
 export const getConsoleLogs: Tool = {
   schema: {
@@ -18,6 +18,26 @@ export const getConsoleLogs: Tool = {
     const text: string = consoleLogs
       .map((log) => JSON.stringify(log))
       .join("\n");
+    return {
+      content: [{ type: "text", text }],
+    };
+  },
+};
+
+export const getNetworkLogs: Tool = {
+  schema: {
+    name: GetNetworkLogsTool.shape.name.value,
+    description: GetNetworkLogsTool.shape.description.value,
+    inputSchema: zodToJsonSchema(GetNetworkLogsTool.shape.arguments),
+  },
+  handle: async (context, _params) => {
+    const networkLogs = await context.sendSocketMessage(
+      "browser_get_network_logs",
+      {},
+    );
+    const text: string = networkLogs
+      .map((log: any) => JSON.stringify(log, null, 2))
+      .join("\n\n");
     return {
       content: [{ type: "text", text }],
     };
