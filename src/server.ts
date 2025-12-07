@@ -60,7 +60,8 @@ export async function createServerWithTools(options: Options): Promise<Server> {
     }
 
     try {
-      const result = await tool.handle(context, request.params.arguments);
+      const args = request.params.arguments ?? {};
+      const result = await tool.handle(context, args);
       return result;
     } catch (error) {
       return {

@@ -32,18 +32,31 @@ export const click: Tool = {
     inputSchema: zodToJsonSchema(ClickTool.shape.arguments),
   },
   handle: async (context: Context, params) => {
-    const validatedParams = ClickTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_click", validatedParams);
-    const snapshot = await captureAriaSnapshot(context);
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Clicked "${validatedParams.element}"`,
-        },
-        ...snapshot.content,
-      ],
-    };
+    try {
+      const parseResult = ClickTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with an "element" property containing the element name or selector to click.`);
+      }
+      
+      const validatedParams = parseResult.data;
+      await context.sendSocketMessage("browser_click", validatedParams);
+      const snapshot = await captureAriaSnapshot(context);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Clicked "${validatedParams.element}"`,
+          },
+          ...snapshot.content,
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to click element: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };
 
@@ -54,18 +67,31 @@ export const drag: Tool = {
     inputSchema: zodToJsonSchema(DragTool.shape.arguments),
   },
   handle: async (context: Context, params) => {
-    const validatedParams = DragTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_drag", validatedParams);
-    const snapshot = await captureAriaSnapshot(context);
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Dragged "${validatedParams.startElement}" to "${validatedParams.endElement}"`,
-        },
-        ...snapshot.content,
-      ],
-    };
+    try {
+      const parseResult = DragTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with "startElement" and "endElement" properties.`);
+      }
+      
+      const validatedParams = parseResult.data;
+      await context.sendSocketMessage("browser_drag", validatedParams);
+      const snapshot = await captureAriaSnapshot(context);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Dragged "${validatedParams.startElement}" to "${validatedParams.endElement}"`,
+          },
+          ...snapshot.content,
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to drag element: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };
 
@@ -76,18 +102,31 @@ export const hover: Tool = {
     inputSchema: zodToJsonSchema(HoverTool.shape.arguments),
   },
   handle: async (context: Context, params) => {
-    const validatedParams = HoverTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_hover", validatedParams);
-    const snapshot = await captureAriaSnapshot(context);
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Hovered over "${validatedParams.element}"`,
-        },
-        ...snapshot.content,
-      ],
-    };
+    try {
+      const parseResult = HoverTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with an "element" property containing the element name or selector to hover.`);
+      }
+      
+      const validatedParams = parseResult.data;
+      await context.sendSocketMessage("browser_hover", validatedParams);
+      const snapshot = await captureAriaSnapshot(context);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Hovered over "${validatedParams.element}"`,
+          },
+          ...snapshot.content,
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to hover element: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };
 
@@ -98,18 +137,31 @@ export const type: Tool = {
     inputSchema: zodToJsonSchema(TypeTool.shape.arguments),
   },
   handle: async (context: Context, params) => {
-    const validatedParams = TypeTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_type", validatedParams);
-    const snapshot = await captureAriaSnapshot(context);
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Typed "${validatedParams.text}" into "${validatedParams.element}"`,
-        },
-        ...snapshot.content,
-      ],
-    };
+    try {
+      const parseResult = TypeTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with "element" and "text" properties.`);
+      }
+      
+      const validatedParams = parseResult.data;
+      await context.sendSocketMessage("browser_type", validatedParams);
+      const snapshot = await captureAriaSnapshot(context);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Typed "${validatedParams.text}" into "${validatedParams.element}"`,
+          },
+          ...snapshot.content,
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to type text: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };
 
@@ -120,17 +172,30 @@ export const selectOption: Tool = {
     inputSchema: zodToJsonSchema(SelectOptionTool.shape.arguments),
   },
   handle: async (context: Context, params) => {
-    const validatedParams = SelectOptionTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_select_option", validatedParams);
-    const snapshot = await captureAriaSnapshot(context);
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Selected option in "${validatedParams.element}"`,
-        },
-        ...snapshot.content,
-      ],
-    };
+    try {
+      const parseResult = SelectOptionTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with an "element" property containing the element name or selector.`);
+      }
+      
+      const validatedParams = parseResult.data;
+      await context.sendSocketMessage("browser_select_option", validatedParams);
+      const snapshot = await captureAriaSnapshot(context);
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Selected option in "${validatedParams.element}"`,
+          },
+          ...snapshot.content,
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to select option: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };

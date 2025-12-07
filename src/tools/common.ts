@@ -19,19 +19,32 @@ export const navigate: ToolFactory = (snapshot) => ({
     inputSchema: zodToJsonSchema(NavigateTool.shape.arguments),
   },
   handle: async (context, params) => {
-    const { url } = NavigateTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_navigate", { url });
-    if (snapshot) {
-      return captureAriaSnapshot(context);
+    try {
+      const parseResult = NavigateTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with a "url" property containing the URL to navigate to.`);
+      }
+      
+      const { url } = parseResult.data;
+      await context.sendSocketMessage("browser_navigate", { url });
+      if (snapshot) {
+        return captureAriaSnapshot(context);
+      }
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Navigated to ${url}`,
+          },
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to navigate: ${error.message}`);
+      }
+      throw error;
     }
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Navigated to ${url}`,
-        },
-      ],
-    };
   },
 });
 
@@ -86,16 +99,29 @@ export const wait: Tool = {
     inputSchema: zodToJsonSchema(WaitTool.shape.arguments),
   },
   handle: async (context, params) => {
-    const { time } = WaitTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_wait", { time });
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Waited for ${time} seconds`,
-        },
-      ],
-    };
+    try {
+      const parseResult = WaitTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with a "time" property containing the number of seconds to wait.`);
+      }
+      
+      const { time } = parseResult.data;
+      await context.sendSocketMessage("browser_wait", { time });
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Waited for ${time} seconds`,
+          },
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to wait: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };
 
@@ -106,15 +132,28 @@ export const pressKey: Tool = {
     inputSchema: zodToJsonSchema(PressKeyTool.shape.arguments),
   },
   handle: async (context, params) => {
-    const { key } = PressKeyTool.shape.arguments.parse(params);
-    await context.sendSocketMessage("browser_press_key", { key });
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Pressed key ${key}`,
-        },
-      ],
-    };
+    try {
+      const parseResult = PressKeyTool.shape.arguments.safeParse(params);
+      if (!parseResult.success) {
+        const errorMessages = parseResult.error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join(', ');
+        throw new Error(`Invalid parameters: ${errorMessages}. Please provide an object with a "key" property containing the key to press.`);
+      }
+      
+      const { key } = parseResult.data;
+      await context.sendSocketMessage("browser_press_key", { key });
+      return {
+        content: [
+          {
+            type: "text",
+            text: `Pressed key ${key}`,
+          },
+        ],
+      };
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new Error(`Failed to press key: ${error.message}`);
+      }
+      throw error;
+    }
   },
 };
